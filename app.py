@@ -1,7 +1,9 @@
 from flask import Flask
 
-from blueprints.climbers import climbers_blueprint
+import logging
+
 from blueprints.routes import routes_blueprint
+from blueprints.climbers import climbers_blueprint
 
 
 def create_app():

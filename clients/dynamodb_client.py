@@ -2,13 +2,15 @@ import boto3
 import datetime
 import random
 import sys
+import constants
 
 from models.route.route import Route
+from models.climber.climber import Climber
 
 
 class DynamoDBClient:
 
-    def __init__(self, region: str) -> None:
+    def __init__(self, region: str = 'us-east-1') -> None:
         """ DynamoDB Client Constructor. """
         self.region = region
 
@@ -21,16 +23,21 @@ class DynamoDBClient:
         item_dict = {}
 
         # generate unique identifier
-        identifier = str(datetime.datetime.utcnow()) + 'T' + \
+        item_id = str(datetime.datetime.utcnow()) + 'T' + \
             str(random.randint(0, sys.maxsize))
 
         item_dict['id'] = {
-            'S': identifier
+            'S': item_id
         }
 
         for key, value in vars(item).items():
+
+            value_type = 'S'
+            if isinstance(value, int):
+                value_type = 'N'
+
             item_dict[key] = {
-                'S': value
+                value_type: value
             }
 
         response = self.client.put_item(
@@ -38,55 +45,54 @@ class DynamoDBClient:
             Item=item_dict
         )
 
-        print(response)
-        return(response)
-
-    def put_route(self, table: str, route: Route) -> None:
-
-        # generate unique identifier
-        route_id = str(datetime.datetime.utcnow()) + 'T' + \
-            str(random.randint(0, sys.maxsize))
-
-        response = self.client.put_item(
-            TableName=table,
-            Item={
-                'id': {
-                    'S': route_id
-                },
-                'name': {
-                    'S': route.name
-                },
-                'grade': {
-                    'S': route.grade
-                },
-                'climb_type': {
-                    'S': route.climb_type
-                },
-                'wall': {
-                    'S': route.wall
-                },
-                'crag': {
-                    'S': route.crag
-                },
-                'style': {
-                    'S': route.style
-                },
-                'ascent': {
-                    'S': route.ascent
-                },
-                'height': {
-                    'N': route.height
-                },
-                'pitches': {
-                    'N': route.pitches,
-                },
-                'timestamp': {
-                    'S': str(route.timestamp)
-                }
-            }
-        )
-        print(response)
         return response
 
+    def delete_item(self, table: str, key: str) -> None:
+        """ Delete item """
 
-dynamodb_client = DynamoDBClient(region='us-east-1')
+        key_dict = {
+            'id': {
+                'S': key
+            }
+        }
+
+        print(key_dict)
+
+        response = self.client.delete_item(
+            TableName=table,
+            Key=key_dict
+        )
+
+        return response
+
+    def put_route(self, route: Route) -> None:
+        response = self.put_item(
+            table=constants.ROUTES_TABLE,
+            item=route
+        )
+
+        return response
+
+    def put_climber(self, climber: Climber) -> None:
+        response = self.put_item(
+            table=constants.CLIMBERS_TABLE,
+            item=climber
+        )
+
+        return response
+
+    def delete_route(self, route_id: str) -> None:
+        response = self.delete_item(
+            table=constants.ROUTES_TABLE,
+            key=route_id
+        )
+
+        return response
+
+    def delete_climber(self, climber_id: str) -> None:
+        response = self.delete_item(
+            table=constants.CLIMBERS_TABLE,
+            key=climber_id
+        )
+
+        return response

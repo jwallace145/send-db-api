@@ -1,10 +1,9 @@
 import datetime
-from ..climber.climber import Climber
 
 
 class Route:
 
-    def __init__(self, name: str, climber: Climber, grade: str, climb_type: str, wall: str, crag: str,  style: str, ascent: str, height: int, pitches: int,  timestamp: datetime) -> None:
+    def __init__(self, climber_id: str, name: str, grade: str, climb_type: str, wall: str, crag: str,  style: str, ascent: str, height: int, pitches: int,  timestamp: datetime) -> None:
         """ Route Constructor.
 
         Args:
@@ -21,6 +20,7 @@ class Route:
             timestamp (datetime): The timestamp of the climb.
         """
 
+        self.climber_id = climber_id
         self.name = name
         self.grade = grade
         self.climb_type = climb_type
@@ -33,7 +33,7 @@ class Route:
         self.timestamp = timestamp
 
     def __str__(self) -> str:
-        """" Returns route as a string"""
+        """" Returns Route as a string """
         return (
             f'{__name__}\n'
             f'name: {self.name}\n'

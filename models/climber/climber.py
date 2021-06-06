@@ -16,7 +16,7 @@ class Climber:
         self.last_name = last_name
 
     def __str__(self) -> str:
-        """ Returns climber as a string """
+        """ Returns Climber as a string """
 
         return (
             f'{__name__}\n'

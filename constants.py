@@ -51,3 +51,6 @@ ROUTE_GRADES_DICTIONARY = {
     '5.14c': '5.14c',
     '5.14d': '5.14d'
 }
+
+ROUTES_TABLE = 'routes'
+CLIMBERS_TABLE = 'climbers'
